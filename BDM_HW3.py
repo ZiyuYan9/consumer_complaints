@@ -18,7 +18,7 @@ def mapper(partition, records):
 if __name__=='__main__':
     sc = SparkContext()
 
-    Complaint = sc.textFile('complaints.csv', use_unicode=True)
+    Complaint = sc.textFile('/tmp/bdm/complaints.csv', use_unicode=True)
 
     data = Complaint.mapPartitionsWithIndex(mapper)
     
@@ -28,7 +28,7 @@ if __name__=='__main__':
     
     company_complaints = data.map(lambda x: (x, 1)).reduceByKey(lambda x, y: x+y).map(lambda x: (x[0][0],x[1])).reduceByKey(lambda x, y: max(x,y))
 
-    outcome = year_complaint.join(company_number).join(company_complaints).mapValues(lambda x: (x[0][0],x[0][1],round(100*x[1]/x[0][0]))).sortByKey(ascending=True).saveAsTextFile('output_folder')
+    outcome = year_complaint.join(company_number).join(company_complaints).mapValues(lambda x: (x[0][0],x[0][1],round(100*x[1]/x[0][0]))).sortByKey(ascending=True).saveAsTextFile('output')
 
 
 # In[ ]:
